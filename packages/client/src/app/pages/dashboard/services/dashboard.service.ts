@@ -9,6 +9,7 @@ import type { BasePaginationService } from '../../../components/pagination/pagin
 import { JobsApiService } from '../../../core/api/jobs/jobs-api.service';
 import { ApplicationModalComponent } from '../components/application-modal/application-modal.component';
 import { JobInfoModalComponent } from '../components/job-info-modal/job-info-modal.component';
+import { AlertService } from '../../../core/services/alert/alert.service';
 
 interface JobsFilters {
   applicationStatus?: string | null;
@@ -51,6 +52,7 @@ export class DashboardService implements BasePaginationService {
     private readonly routes: ActivatedRoute,
     private readonly matDialog: MatDialog,
     private readonly router: Router,
+    private readonly AlertService: AlertService,
   ) {
     this.search$.pipe(takeUntilDestroyed()).subscribe((fromPagination) => {
       void this.searchJobs(fromPagination);
@@ -167,7 +169,7 @@ export class DashboardService implements BasePaginationService {
     const data = this.dataSource().find((job) => job.id === jobId);
 
     if (!data) {
-      alert('The job is not found');
+      this.AlertService.showError('Job not found');
       void this.router.navigate(['/dashboard']);
       return;
     }
